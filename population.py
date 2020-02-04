@@ -13,6 +13,7 @@ __email__ = "tar15@ic.ac.uk"
 
 # NUMBER OF LSOAs IN ENGLAND AND WALES IN 2011 : 34,753
 
+# add each male and female population dataset to each list. Merge and export at the end
 males_dfs = []
 females_dfs = []
 
@@ -53,12 +54,14 @@ def clean_pop_2002_2010(df, gender):
         upper += 5
     df[gender + "85+"] = df.iloc[:, 85+offset:90+offset+1].sum(axis=1) # separate for 85+ column
     df = df.drop(df.iloc[:,1:95], axis = 1)
+    df = df.rename(columns={"LSOA11CD": "LSOA2011"})
     return df
 
-##### RENAME LSOA CODE COLUMNS FOR CONSISTENCY df.rename(columns={"Area": "LSOA2011"})
-##### MERGE MALE AND FEMALE DATAFRAMES INTO 1 per year
-##### CHECK THE NUMBERS FOR CONSISTENCY
-##### EXPORT EACH DATAFRAME AS CSV df.to_csv('out.csv')
+for i in range(len(range(2002, 2010+1))):
+    male_df   = clean_pop_2002_2010(males_2002_2010_prep_dfs[i], "m")
+    males_dfs.append(male_df)
+    female_df = clean_pop_2002_2010(females_2002_2010_prep_dfs[i], "f")
+    females_dfs.append(female_df)
 
 # 2011 census populations are grouped by 5 year age group but the 90+ needs to be changed to 85+
 males_df_2011 = pd.read_excel("../Data/Populations/pop2011_lsoa2011.xls", sheet_name = "Mid-2011 Males",  engine = "xlrd", skiprows = 3).dropna(subset=["Unnamed: 2"])
@@ -70,22 +73,24 @@ males_df_2011["85+"] = males_df_2011.iloc[:,-2] + males_df_2011.iloc[:,-1]
 males_df_2011 = males_df_2011.drop(columns=["Area Codes", "Area Names", "Unnamed: 2", "All Ages", "85-89", "90+"])
 males_df_2011 = males_df_2011.add_prefix('m')
 males_df_2011.columns = males_df_2011.columns.str.replace("-", "_")
-males_df_2011.insert(0, "Area Codes", area_codes)
+males_df_2011.insert(0, "LSOA 2011", area_codes)
 males_dfs.append(males_df_2011)
 
 females_df_2011["85+"] = females_df_2011.iloc[:,-2] + females_df_2011.iloc[:,-1]
 females_df_2011 = females_df_2011.drop(columns=["Area Codes", "Area Names", "Unnamed: 2", "All Ages", "85-89", "90+"])
-females_df_2011 = females_df_2011.add_prefix('m')
+females_df_2011 = females_df_2011.add_prefix('f')
 females_df_2011.columns = females_df_2011.columns.str.replace("-", "_")
-females_df_2011.insert(0, "Area Codes", area_codes)
+females_df_2011.insert(0, "LSOA2011", area_codes)
 females_dfs.append(females_df_2011)
 
 # Files between 2012-2017 are of the same file type with a different sheet for males and females and a population estimate for each age until 90+
 for year in range(2012, 2017+1):
     males_df = pd.read_excel("../Data/Populations/pop{0!s}_lsoa2011.xls".format(year), sheet_name = "Mid-{0!s} Males".format(year),  engine = "xlrd", skiprows = 4)
     males_df = males_df.dropna(subset=["Unnamed: 2"])
+    males_df = males_df.rename(columns={"Area Codes": "LSOA2011"})
     females_df = pd.read_excel("../Data/Populations/pop{0!s}_lsoa2011.xls".format(year), sheet_name = "Mid-{0!s} Females".format(year),  engine = "xlrd", skiprows = 4)
     females_df = females_df.dropna(subset=["Unnamed: 2"])
+    females_df = females_df.rename(columns={"Area Codes": "LSOA2011"})
 
     # Sum into five year age groups (and 85+)
     age_groups_list = np.array_split(range(85), 17) # splits into groups of 5 years
@@ -103,3 +108,11 @@ for year in range(2012, 2017+1):
 
     females_df.drop(females_df.columns[1:95], axis=1, inplace=True) # Keep only the LSOA code and summed columns
     females_dfs.append(females_df)
+
+populations_dfs = [males_dfs[i].merge(females_dfs[i], on = "LSOA2011") for i in range(len(range(2001+1, 2017+1)))]
+
+# for i, df in enumerate(populations_dfs):
+#     df.to_csv("pop_lsoa2011_" + str(2001+1 + i) + ".csv") # change to 2001 when census data is fixed
+
+##### CHECK THE NUMBERS FOR CONSISTENCY
+##### EXPORT EACH DATAFRAME AS CSV df.to_csv('out.csv')
