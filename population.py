@@ -73,7 +73,7 @@ males_df_2011["85+"] = males_df_2011.iloc[:,-2] + males_df_2011.iloc[:,-1]
 males_df_2011 = males_df_2011.drop(columns=["Area Codes", "Area Names", "Unnamed: 2", "All Ages", "85-89", "90+"])
 males_df_2011 = males_df_2011.add_prefix('m')
 males_df_2011.columns = males_df_2011.columns.str.replace("-", "_")
-males_df_2011.insert(0, "LSOA 2011", area_codes)
+males_df_2011.insert(0, "LSOA2011", area_codes)
 males_dfs.append(males_df_2011)
 
 females_df_2011["85+"] = females_df_2011.iloc[:,-2] + females_df_2011.iloc[:,-1]
