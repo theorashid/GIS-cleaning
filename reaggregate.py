@@ -42,5 +42,7 @@ def reaggregator(source_geog, target_geog, geog_df, value_df):
     agg_df["income score"]     = agg_df["income score"]/agg_df["gid"]
     agg_df["employment score"] = agg_df["employment score"]/agg_df["gid"]
 
+    agg_df = agg_df.drop(columns=["gid"])
+
     return agg_df
     
