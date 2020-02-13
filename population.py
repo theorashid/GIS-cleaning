@@ -109,10 +109,8 @@ for year in range(2012, 2017+1):
     females_df.drop(females_df.columns[1:95], axis=1, inplace=True) # Keep only the LSOA code and summed columns
     females_dfs.append(females_df)
 
-populations_dfs = [males_dfs[i].merge(females_dfs[i], on = "LSOA2011") for i in range(len(range(2001+1, 2017+1)))]
+# IGNORE 2001 some LSOA2011 start at 0 population
+populations_dfs = [males_dfs[i].merge(females_dfs[i], on = "LSOA2011") for i in range(len(range(2002, 2017+1)))]
 
 # for i, df in enumerate(populations_dfs):
-#     df.to_csv("pop_lsoa2011_" + str(2001+1 + i) + ".csv") # change to 2001 when census data is fixed
-
-##### CHECK THE NUMBERS FOR CONSISTENCY
-##### EXPORT EACH DATAFRAME AS CSV df.to_csv('out.csv')
+#     df.to_csv("pop_lsoa2011_" + str(2002 + i) + ".csv")
