@@ -105,3 +105,7 @@ IMD_2019_df = IMD_2019_df[["LSOA code (2011)", "Index of Multiple Deprivation (I
                            "Employment Score (rate)"]]
 IMD_2019_df = IMD_2019_df.rename(columns={"LSOA code (2011)": "LSOA2011", "Index of Multiple Deprivation (IMD) Score": "IMD score",
                                           "Income Score (rate)": "income score", "Employment Score (rate)": "employment score"})
+
+
+# Export to csv
+# IMD_2004_df.to_csv("IMD_LSOA11_2004.csv") # etc
