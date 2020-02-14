@@ -72,4 +72,14 @@ pop4 = pop4.merge(IMD_2015_df, on="LSOA2011")
 
 population_IMD = pd.concat([pop1, pop2, pop3, pop4], ignore_index=True)
 
-# reduce to london only
+# add MSOA and LAD
+geog_2011 = pd.read_csv("../Data/Geography/OA2011_lookup.csv", engine = "python")
+geog_2011 = geog_2011[geog_2011["LAD11CD"].astype(str).str.startswith("E09")] # London only
+geog_2011 = geog_2011[["LSOA11CD", "MSOA11CD", "LAD11CD"]]
+geog_2011 = geog_2011.rename(columns={"LSOA11CD": "LSOA2011", "MSOA11CD": "MSOA2011", "LAD11CD": "LAD2011"})
+geog_2011 = geog_2011.groupby(["LSOA2011"]).agg(lambda x:x.value_counts().index[0]) # at LSOA level
+
+population_IMD = population_IMD.merge(geog_2011, on="LSOA2011")
+
+# population_IMD.to_csv("pop_IMD_2004_17.csv")
+# geog_2011.to_csv("ldn_geog_lookup.csv")
