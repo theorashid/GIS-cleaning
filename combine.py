@@ -94,4 +94,12 @@ age_group_id_dict = dict(zip(list(age_groups), range(1, 19+1)))
 population_IMD["age_group id"] = population_IMD["age_group"].map(age_group_id_dict)
 
 # population_IMD.to_csv("pop_IMD_2004_17.csv")
+
+# Unit test only Hammersmith and Fulham
+population_IMD_hf = population_IMD[population_IMD["LAD2011"] == "E09000013"].reset_index()
+# re-rank area IDs
+population_IMD_hf["LAD id"] = population_IMD_hf["LAD id"].rank(method="dense")
+population_IMD_hf["MSOA id"] = population_IMD_hf["MSOA id"].rank(method="dense")
+population_IMD_hf["LSOA id"] = population_IMD_hf["LSOA id"].rank(method="dense")
+
 # geog_2011.to_csv("ldn_geog_lookup.csv")
