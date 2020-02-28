@@ -26,13 +26,13 @@ IMD_2015_df = pd.read_csv("../Data/IMD/reaggregated IMD/IMD_LSOA11_2015.csv", in
 # Column for male or female
 # Column for which age group
 
-male_cols = list(populations[0].columns[1:19])
+male_cols = list(populations[0].columns[1:20])
 male_cols.insert(0, "LSOA2011")
 
-female_cols = list(populations[0].columns[19:37])
+female_cols = list(populations[0].columns[20:39])
 female_cols.insert(0, "LSOA2011")
 
-age_groups = populations[0].columns[1:19].str.replace("m", "")
+age_groups = populations[0].columns[1:20].str.replace("m", "")
 
 def melt_pops(df):
     """Reshape population dfs to be stacked with age group and female levels
@@ -80,6 +80,18 @@ geog_2011 = geog_2011.rename(columns={"LSOA11CD": "LSOA2011", "MSOA11CD": "MSOA2
 geog_2011 = geog_2011.groupby(["LSOA2011"]).agg(lambda x:x.value_counts().index[0]) # at LSOA level
 
 population_IMD = population_IMD.merge(geog_2011, on="LSOA2011")
+
+population_IMD = population_IMD[["LAD2011", "MSOA2011", "LSOA2011", "YEAR", "age_group", "sex", "population",
+                                "IMD score", "income score", "employment score"]]
+
+# add ID columns to LAD, MSOA, LSOA, YEAR, age_group (start at 1 for modelling in R)
+population_IMD["LAD id"] = population_IMD.groupby("LAD2011").ngroup() + 1 
+population_IMD["MSOA id"] = population_IMD.groupby("MSOA2011").ngroup() + 1 
+population_IMD["LSOA id"] = population_IMD.groupby("LSOA2011").ngroup() + 1 
+population_IMD["YEAR id"] = population_IMD.groupby("YEAR").ngroup() + 1
+
+age_group_id_dict = dict(zip(list(age_groups), range(1, 19+1)))
+population_IMD["age_group id"] = population_IMD["age_group"].map(age_group_id_dict)
 
 # population_IMD.to_csv("pop_IMD_2004_17.csv")
 # geog_2011.to_csv("ldn_geog_lookup.csv")
