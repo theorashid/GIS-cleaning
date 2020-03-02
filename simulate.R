@@ -50,9 +50,10 @@ pop_IMD_df <- pop_IMD_df[, c(1,2,3,4,5,6,16,7,8,9,10,11,12,13,14,15)]
 
 # Get only Hammersmith and Fulham for unit test
 pop_IMD_df_hf <- read.csv(file = "../Data/pop_IMD_2004_17_hf.csv") %>%
-    select(-X, -index)
+    select(-X)
 deaths_hf <- pop_IMD_df %>%
     filter(LAD2011 == "E09000013") %>%
     select(LSOA2011, YEAR, age_group, sex, deaths)
-
+pop_IMD_df_hf <- inner_join(pop_IMD_df_hf, deaths_hf, by = c("LSOA2011" = "LSOA2011", "YEAR" = "YEAR", "age_group" = "age_group", "sex" = "sex"))
+pop_IMD_df_hf <- pop_IMD_df_hf[, c(1,2,3,4,5,6,16,7,8,9,10,11,12,13,14,15)]
 # pop_IMD_df_hf.to_csv("mortsim_hf.csv")
