@@ -96,7 +96,7 @@ population_IMD["age_group id"] = population_IMD["age_group"].map(age_group_id_di
 # population_IMD.to_csv("pop_IMD_2004_17.csv")
 
 # Unit test only Hammersmith and Fulham
-population_IMD_hf = population_IMD[population_IMD["LAD2011"] == "E09000013"].reset_index()
+population_IMD_hf = population_IMD[population_IMD["LAD2011"] == "E09000013"].reset_index(drop=True)
 # re-rank area IDs
 population_IMD_hf["LAD id"] = population_IMD_hf["LAD id"].rank(method="dense").astype("int")
 population_IMD_hf["MSOA id"] = population_IMD_hf["MSOA id"].rank(method="dense").astype("int")
