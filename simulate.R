@@ -33,8 +33,8 @@ years <- data.matrix(pop_IMD_df_wide[4])
 mxE <- exp(-5.5 + c(0,-2.9,-3,-2.9,-1.8,-1.7,-1.7,-1.6,-1.4,-.8,-.2,.3,1.0,1.5,1.9,2.4,2.8,3.4,3.8)) # mean 0.0260, sd 0.0491
 mxE_mat <- t(replicate(135380, mxE)) # expand this into the length of populations/income deprivation
 
-# Temporal term based on slope of ONS mortality rates 2001 and 2019
-beta <- (1229.8/100000 - 919.9/100000)/(2019 - 2001)
+# Temporal term based on slope of ONS mortality rates between 2001 and 2019
+beta <- (919.9/100000 - 1229.8/100000)/(2019 - 2001)
 time_effects <- beta * (years - mean(years))/sum(abs(range(years - mean(years)))) # recentred and scaled years
 mxE_mat <- mxE_mat + matrix(rep(time_effects, 19), ncol=19)
 
